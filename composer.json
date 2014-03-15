@@ -15,7 +15,10 @@
         "php": ">=5.3.3",
 
         "symfony/framework-bundle":        "~2.3",
-	"doctrine/orm": "~2.2"
+	"doctrine/orm": "~2.2",
+        "vich/uploader-bundle": "v0.9.0",
+        "knplabs/knp-gaufrette-bundle" : "0.2.*@dev",
+        "knplabs/gaufrette": "0.2.*@dev"
     },
     "require-dev": {
         "symfony/form":      "~2.3",
