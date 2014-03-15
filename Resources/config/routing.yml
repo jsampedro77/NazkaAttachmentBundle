@@ -1,0 +1,15 @@
+nazka_attachment_list:
+      pattern:   /attachment/{attachable_id}/list
+      defaults: { _controller: NazkaAttachmentBundle:Attachment:list }
+
+nazka_attachment_get:
+      pattern:   /attachment/get/{id}
+      defaults: { _controller: NazkaAttachmentBundle:Attachment:get}
+
+nazka_attachment_content:
+      pattern:   /attachment/{id}/content
+      defaults: { _controller: NazkaAttachmentBundle:Attachment:getContent}
+      
+nazka_attachment_new:
+      pattern:   /attachment/new
+      defaults: { _controller: NazkaAttachmentBundle:Attachment:new}

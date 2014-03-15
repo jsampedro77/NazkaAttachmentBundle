@@ -1,0 +1,5 @@
+{% extends 'NazkaAttachmentBundle:Attachment:mediaLayout.html.twig' %}
+
+{%block media%}
+<img src="{{path('nazka_attachment_content', {'id' : attachment.id, })}}"/>
+{%endblock%}

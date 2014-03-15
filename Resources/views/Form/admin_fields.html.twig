@@ -1,0 +1,31 @@
+{% block nazka_attachment_admin_widget %}
+    {% spaceless %}
+
+
+{% set attachment =  form.vars.value%}
+<div class="well row-fluid span11">
+{%if attachment %}
+    <div class="span3 pull-left">
+        <a href="{{path('nazka_attachment_get', {'id' : attachment.id})}}"> 
+            {{attachment | attachment_thumbnail}}
+        </a>
+    </div>
+
+    <div class="span8">
+        {{form_row(form.originalFileName)}}
+        {{form_row(form.description)}}
+        {{form_row(form.access)}}
+        {{form_row(form.createdByLabel)}}
+        {{form_row(form.createdAt)}}
+    </div>
+{%else%} 
+
+    {{form_row(form.file)}}
+    {{form_row(form.description)}}
+    {{form_row(form.access)}}
+
+{%endif%}
+</div>
+
+    {% endspaceless %}
+{% endblock %}

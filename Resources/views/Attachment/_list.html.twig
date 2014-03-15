@@ -1,0 +1,38 @@
+<div id="attachment-list">
+    {%for attachment in attachments | reverse%}
+    <a target="_blank" href="{{path('nazka_attachment_get', {'id' : attachment.id})}}"> 
+        <div class="row-fluid">
+            <div class="span1 pull-left">
+               {{attachment | attachment_thumbnail}}
+            </div>
+
+            <div class="span10 offset1">
+                <p>{{attachment.originalFileName}}</p>
+                <p> <i class="icon-user"></i> {{attachment.createdBy}} <i class="icon-calendar"></i> {{attachment.createdAt | localizeddate('full','medium')}}</p>
+                {%if attachment.description%}
+                <p><i class="icon-comment"></i> {{attachment.description}}</p>
+                {%endif%}
+            </div>
+            <div class="clearfix"></div>
+            <hr/>
+        </div>
+    </a>     
+
+    {%else%}
+    No existen documentos asociados
+    {%endfor%}
+
+
+    <form id="new-attachments-form" name="new-attachments" action="{{path('nazka_attachment_new')}}" method="POST" enctype="multipart/form-data">
+        <div id="new-attachments-list" data-prototype="{{ form_widget(newForm.attachments.vars.prototype) | e }}">
+        {% for attachmentField in newForm.attachments %}
+                {{ form_errors(attachmentField) }}
+                {{ form_widget(attachmentField) }}
+        {% endfor %}
+
+            {{form_widget(newForm.attachable)}}
+            {{form_row(newForm._token)}}
+        </div>
+
+    </form>
+</div>

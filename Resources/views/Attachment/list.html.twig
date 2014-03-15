@@ -1,0 +1,62 @@
+<script src="http://malsup.github.com/jquery.form.js"></script> 
+
+    {% include 'NazkaAttachmentBundle:Attachment:_list.html.twig'%}
+
+
+<a href="#" class="btn" id="data-new-attachment"><i class="icon-plus"></i> Nuevo</a>
+<a href="#" style="display:none" class="btn btn-success" id="new-attachments-upload"><i class="icon-upload"></i> Upload</<>
+
+    <script language="javascript">
+
+        var attachmentCount = 0;
+
+        $().ready(function() {
+
+
+
+            $("#data-new-attachment").click(function(e) {
+                e.preventDefault();
+                $("#new-attachments-upload").show();
+
+                var attachmentList = $('#new-attachments-list');
+
+                var newWidget = attachmentList.attr('data-prototype');
+                newWidget = newWidget.replace(/__name__/g, attachmentCount);
+                attachmentCount++;
+
+                // create a new list element and add it to the list
+                var newDiv = $('<div></div>').html(newWidget);
+                newDiv.appendTo($('#new-attachments-list'));
+
+                return false;
+
+            });
+
+            $("#new-attachments-upload").click(function(e) {
+                e.preventDefault();
+
+                var options = {
+                    beforeSubmit: beforeSubmit,
+                    success: showResponse  // post-submit callback
+                };
+
+                $("#new-attachments-form").ajaxSubmit(options);
+            });
+
+            function showResponse(responseText, statusText, xhr, $form) {
+
+                if (statusText === 'success') {
+                    $("#attachment-list").replaceWith(responseText);
+                } else {
+                    alert('error');
+                }
+            }
+
+            function beforeSubmit(formData, jqForm, options) {
+                $("#new-attachments-form").html("<i class='icon-spinner icon-spin icon-large'></i>");
+                $("#new-attachments-upload").hide();
+            }
+
+        });
+
+    </script>

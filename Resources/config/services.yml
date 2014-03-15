@@ -1,0 +1,87 @@
+parameters:
+    nazka_attachment.storage.gaufrette.class: Nazka\AttachmentBundle\Storage\VichGaufretteStorage
+    nazka_attachment.thumbnail.generator.class: Nazka\AttachmentBundle\Generator\ThumbnailGenerator
+    nazka_attachment.video.thumbnail.generator.class: Nazka\AttachmentBundle\Generator\VideoThumbnailGenerator
+    nazka_attachment.attachment.manager.class: Nazka\AttachmentBundle\Manager\AttachmentManager
+    nazka_attachment.attachable.manager.class: Nazka\AttachmentBundle\Manager\AttachableManager
+    nazka_attachment.format.manager.class: Nazka\AttachmentBundle\Manager\FormatManager
+    nazka_attachment.attachment_repository.class: Doctrine\ORM\EntityRepository
+    nazka_attachment.attachable_repository.class: Doctrine\ORM\EntityRepository
+    nazka_attachment.attachment.class: Nazka\AttachmentBundle\Entity\Attachment
+    nazka_attachment.attachable.class: Nazka\AttachmentBundle\Entity\Attachable
+    nazka_attachment.creator.listener.class: Nazka\AttachmentBundle\Listener\AttachmentCreatorListener
+    nazka_attachment.security.factory.class: Nazka\AttachmentBundle\Factory\SecurityProviderFactory
+    
+    
+services:
+   nazka_attachment.attachment.manager:
+        class: %nazka_attachment.attachment.manager.class%
+        arguments: [@nazka_attachment.attachment_repository, @nazka_attachment.storage.gaufrette, @nazka_attachment.format.manager]
+        lazy: true
+        
+   nazka_attachment.attachable.manager:     
+        class: %nazka_attachment.attachable.manager.class%
+        arguments: [@nazka_attachment.attachable_repository, @doctrine.orm.default_entity_manager, @nazka_attachment.security.factory, @nazka_attachment.attachment.manager]
+    
+   nazka_attachment.storage.gaufrette:
+        class: %nazka_attachment.storage.gaufrette.class%
+        arguments: [@vich_uploader.property_mapping_factory, @knp_gaufrette.filesystem_map]
+        calls:
+            - [setThumbnailGenerator,[@nazka_attachment.thumbnail.generator]]
+            
+   nazka_attachment.format.manager:
+        class: %nazka_attachment.format.manager.class%
+
+        
+   nazka_attachment.thumbnail.generator:
+        class: %nazka_attachment.thumbnail.generator.class%
+        arguments: [@nazka_attachment.video.thumbnail.generator, @nazka_attachment.format.manager]
+        lazy: true
+        
+   nazka_attachment.video.thumbnail.generator:
+        class: %nazka_attachment.video.thumbnail.generator.class%
+        arguments: [%nazka_attachment_ffmpeg_path%]
+        lazy: true
+        
+   #security factory
+   nazka_attachment.security.factory:     
+        class: %nazka_attachment.security.factory.class%
+        
+   #listeners
+   nazka_attachment.creator.listener:
+       class: %nazka_attachment.creator.listener.class%
+       arguments: [@security.context]
+       lazy: true
+       tags:
+        - { name: doctrine.event_listener, event: prePersist }
+        
+   #repository
+   nazka_attachment.attachment_repository:
+        class:           %nazka_attachment.attachment_repository.class%
+        factory_service: doctrine.orm.entity_manager
+        factory_method:  getRepository
+        arguments:
+            - %nazka_attachment.attachment.class%
+            
+   nazka_attachment.attachable_repository:
+        class:           %nazka_attachment.attachable_repository.class%
+        factory_service: doctrine.orm.entity_manager
+        factory_method:  getRepository
+        arguments:
+            - %nazka_attachment.attachable.class%
+   
+#admin form type
+   nazka.attachment.admin.type:
+        class: Nazka\AttachmentBundle\Form\AttachmentAdminType
+        calls: 
+            - [setSecurityProviderFactory, [@nazka_attachment.security.factory]]
+        tags:
+            - { name: form.type, alias: 'nazka_attachment_admin' }
+            
+   #TWIG filter         
+   nazka.attachment.twig.extension:
+          class: Nazka\AttachmentBundle\Twig\AttachmentExtension
+          calls:
+              - [setWebPath, [%kernel.root_dir%/../web]]
+          tags:
+              - { name: 'twig.extension' }

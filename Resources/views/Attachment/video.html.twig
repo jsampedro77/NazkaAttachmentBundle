@@ -1,0 +1,11 @@
+{% extends 'NazkaAttachmentBundle:Attachment:mediaLayout.html.twig' %}
+
+{%block media%}
+<video src="{{path('nazka_attachment_content', {'id' : attachment.id})}}" controls>
+</video>
+<p>
+    <a class="btn" href="{{path('nazka_attachment_content', {'id' : attachment.id})}}">
+        <i class="icon icon-download"></i> Descargar
+    </a>
+</p>
+{%endblock%}
